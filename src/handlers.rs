@@ -27,9 +27,10 @@ pub async fn get_reviews() -> Result<Json<Value>, StatusCode> {
         },
     ];
     
+    let total = reviews.len();
     Ok(Json(json!({
         "reviews": reviews,
-        "total": reviews.len()
+        "total": total
     })))
 }
 
@@ -46,9 +47,10 @@ pub async fn get_comments(Path(review_id): Path<Uuid>) -> Result<Json<Value>, St
             created_at: chrono::Utc::now(),
         },
     ];
-    
+    let total = comments.len();
     Ok(Json(json!({
         "comments": comments,
-        "total": comments.len()
+        "total": total
+    })))
     })))
 }
