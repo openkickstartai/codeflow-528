@@ -1,10 +1,22 @@
 use axum::{extract::Path, http::StatusCode, response::Json};
-use serde_json::{json, Value};
+use serde::Serialize;
 use uuid::Uuid;
 
 use crate::models::{Comment, Review, ReviewStatus};
 
-pub async fn get_reviews() -> Result<Json<Value>, StatusCode> {
+#[derive(Serialize)]
+pub struct ReviewListResponse {
+    reviews: Vec<Review>,
+    total: usize,
+}
+
+#[derive(Serialize)]
+pub struct CommentListResponse {
+    comments: Vec<Comment>,
+    total: usize,
+}
+
+pub async fn get_reviews() -> Result<Json<ReviewListResponse>, StatusCode> {
     // Mock data for initial implementation
     let reviews = vec![
         Review {
@@ -27,13 +39,11 @@ pub async fn get_reviews() -> Result<Json<Value>, StatusCode> {
         },
     ];
     
-    Ok(Json(json!({
-        "reviews": reviews,
-        "total": reviews.len()
-    })))
+    let total = reviews.len();
+    Ok(Json(ReviewListResponse { reviews, total }))
 }
 
-pub async fn get_comments(Path(review_id): Path<Uuid>) -> Result<Json<Value>, StatusCode> {
+pub async fn get_comments(Path(review_id): Path<Uuid>) -> Result<Json<CommentListResponse>, StatusCode> {
     let comments = vec![
         Comment {
             id: Uuid::new_v4(),
@@ -47,8 +57,6 @@ pub async fn get_comments(Path(review_id): Path<Uuid>) -> Result<Json<Value>, St
         },
     ];
     
-    Ok(Json(json!({
-        "comments": comments,
-        "total": comments.len()
-    })))
+    let total = comments.len();
+    Ok(Json(CommentListResponse { comments, total }))
 }
